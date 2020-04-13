@@ -11,9 +11,9 @@ import paramiko
 import sys
 from subprocess import Popen
 from helpers import system
-from pymobiledevice.usbmux.usbmux import USBMux
-from pymobiledevice.lockdown import LockdownClient
-from pymobiledevice.afc import AFCShell, AFC2Client
+from pymobiledevice2.usbmux.usbmux import USBMux
+from pymobiledevice2.lockdown import LockdownClient
+from pymobiledevice2.afc import AFCShell, AFC2Client
 
 class physical(object):
 

@@ -18,7 +18,7 @@ import stat
 import hashlib
 import csv
 import glob
-from pymobiledevice.usbmux.usbmux import USBMux
+from pymobiledevice2.usbmux.usbmux import USBMux
 
 
 

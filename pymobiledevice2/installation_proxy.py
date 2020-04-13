@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2012-2014 "dark[-at-]gotohack.org"
 #
-# This file is part of pymobiledevice
+# This file is part of pymobiledevice2
 #
-# pymobiledevice is free software: you can redistribute it and/or modify
+# pymobiledevice2 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -26,8 +26,8 @@ import os
 import logging
 
 from optparse import OptionParser
-from pymobiledevice.afc import AFCClient
-from pymobiledevice.lockdown import LockdownClient, list_devices
+from pymobiledevice2.afc import AFCClient
+from pymobiledevice2.lockdown import LockdownClient, list_devices
 
 client_options = {
     "SkipUninstall" : False,

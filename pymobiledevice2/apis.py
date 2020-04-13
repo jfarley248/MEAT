@@ -17,7 +17,7 @@ from os import path
 
 
 def get_lockdown_and_service(udid):
-    from pymobiledevice.lockdown import LockdownClient
+    from pymobiledevice2.lockdown import LockdownClient
     lockdown = LockdownClient(udid)
     service = lockdown.startService("com.apple.mobile.installation_proxy")
     return lockdown, service
@@ -40,7 +40,7 @@ def install_ipa(uuid, ipa_path):
     """
     docstring for install_ipa
     """
-    from pymobiledevice.afc import AFCClient
+    from pymobiledevice2.afc import AFCClient
     lockdown, service = get_lockdown_and_service(uuid)
     afc = AFCClient(lockdown=lockdown)
     afc.set_file_contents(

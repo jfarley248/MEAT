@@ -1,6 +1,6 @@
 import logging
 
-from pymobiledevice.lockdown import LockdownClient
+from pymobiledevice2.lockdown import LockdownClient
 
 from pprint import *
 

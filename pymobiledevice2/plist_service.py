@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2012-2014 "dark[-at-]gotohack.org"
 #
-# This file is part of pymobiledevice
+# This file is part of pymobiledevice2
 #
-# pymobiledevice is free software: you can redistribute it and/or modify
+# pymobiledevice2 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -31,7 +31,7 @@ import codecs
 from re import sub
 from six import PY3
 
-from pymobiledevice.usbmux import usbmux
+from pymobiledevice2.usbmux import usbmux
 
 if PY3:
     plistlib.readPlistFromString = plistlib.loads
@@ -130,7 +130,7 @@ class PlistService(object):
             if PY3:
                 return plistlib.readPlistFromString(payload)
             else:
-                from pymobiledevice.util.bplist import BPlistReader
+                from pymobiledevice2.util.bplist import BPlistReader
                 return BPlistReader(payload).parse()
         elif payload.startswith(xml_header):
             #HAX lockdown HardwarePlatform with null bytes

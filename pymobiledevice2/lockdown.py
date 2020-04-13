@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2012-2014 "dark[-at-]gotohack.org"
 #
-# This file is part of pymobiledevice
+# This file is part of pymobiledevice2
 #
-# pymobiledevice is free software: you can redistribute it and/or modify
+# pymobiledevice2 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -31,10 +31,10 @@ import time
 import logging
 from biplist import *
 
-from pymobiledevice.plist_service import PlistService
-from pymobiledevice.ca import ca_do_everything
-from pymobiledevice.util import readHomeFile, writeHomeFile, getHomePath
-from pymobiledevice.usbmux import usbmux
+from pymobiledevice2.plist_service import PlistService
+from pymobiledevice2.ca import ca_do_everything
+from pymobiledevice2.util import readHomeFile, writeHomeFile, getHomePath
+from pymobiledevice2.usbmux import usbmux
 
 from six import PY3
 if PY3:
@@ -64,8 +64,8 @@ class FatalPairingError(Exception):
 
 
 
-#we store pairing records and ssl keys in ~/.pymobiledevice
-HOMEFOLDER = ".pymobiledevice"
+#we store pairing records and ssl keys in ~/.pymobiledevice2
+HOMEFOLDER = ".pymobiledevice2"
 MAXTRIES = 20
 
 
@@ -191,13 +191,13 @@ class LockdownClient(object):
                 self.logger.warning("No iTunes pairing record found for device %s", self.identifier)
 
         if pair_record == None:
-            self.logger.warning("Looking for pymobiledevice pairing record...")
+            self.logger.warning("Looking for pymobiledevice2 pairing record...")
             path = getHomePath(HOMEFOLDER, "%s.plist" %  self.identifier)
             pair_record = self.read_pair_record_from_file(path)
             if pair_record:
-                self.logger.info("Found pymobiledevice pairing record for device %s", self.udid)
+                self.logger.info("Found pymobiledevice2 pairing record for device %s", self.udid)
             else:
-                self.logger.warning("No  pymobiledevice pairing record found for device %s", self.identifier)
+                self.logger.warning("No  pymobiledevice2 pairing record found for device %s", self.identifier)
 
         return pair_record
 

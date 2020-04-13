@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2012-2014 "dark[-at-]gotohack.org"
 #
-# This file is part of pymobiledevice
+# This file is part of pymobiledevice2
 #
-# pymobiledevice is free software: you can redistribute it and/or modify
+# pymobiledevice2 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -39,12 +39,12 @@ from uuid import uuid4
 from stat import *
 
 from six import PY3
-from pymobiledevice.afc import AFCClient
-from pymobiledevice.installation_proxy import installation_proxy
-from pymobiledevice.notification_proxy import *
-from pymobiledevice.sbservices import SBServiceClient
-from pymobiledevice.lockdown import LockdownClient
-from pymobiledevice.mobilebackup import MobileBackup
+from pymobiledevice2.afc import AFCClient
+from pymobiledevice2.installation_proxy import installation_proxy
+from pymobiledevice2.notification_proxy import *
+from pymobiledevice2.sbservices import SBServiceClient
+from pymobiledevice2.lockdown import LockdownClient
+from pymobiledevice2.mobilebackup import MobileBackup
 
 CODE_SUCCESS = 0x00
 CODE_ERROR_LOCAL =  0x06

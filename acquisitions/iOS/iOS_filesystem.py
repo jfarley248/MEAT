@@ -9,8 +9,8 @@
 import sys
 import csv
 from helpers.system2 import get_serial, setup_csv, hasher
-from pymobiledevice.lockdown import LockdownClient
-from pymobiledevice.afc import AFC2Client
+from pymobiledevice2.lockdown import LockdownClient
+from pymobiledevice2.afc import AFC2Client
 
 
 

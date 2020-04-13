@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2012-2014 "dark[-at-]gotohack.org"
 #
-# This file is part of pymobiledevice
+# This file is part of pymobiledevice2
 #
-# pymobiledevice is free software: you can redistribute it and/or modify
+# pymobiledevice2 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -25,7 +25,7 @@
 import re
 import logging
 
-from pymobiledevice.lockdown import LockdownClient
+from pymobiledevice2.lockdown import LockdownClient
 from six import PY3
 from sys import exit
 from datetime import datetime

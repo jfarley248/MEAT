@@ -6,9 +6,9 @@
    iOS_backup.py
 '''
 
-from pymobiledevice.usbmux.usbmux import USBMux
-from pymobiledevice.lockdown import LockdownClient
-from pymobiledevice.mobilebackup2 import MobileBackup2
+from pymobiledevice2.usbmux.usbmux import USBMux
+from pymobiledevice2.lockdown import LockdownClient
+from pymobiledevice2.mobilebackup2 import MobileBackup2
 
 def get_serial():
     mux = USBMux()
