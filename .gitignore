@@ -10,3 +10,4 @@
 *.bat
 *.cfg
 venv/Scripts/activate
+venc/*
