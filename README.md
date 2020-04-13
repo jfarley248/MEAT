@@ -15,7 +15,10 @@ This toolkit aims to help forensicators perform different kinds of acquisitions 
 
 Using the logical acquisition flag on MEAT will instruct the tool to extract files and folders accessible through AFC on jailed devices, such as:
 * Camera Roll
-*
+* Downloads
+* Recordings
+* iTunes Sync Data
+* 
 
 #### Filesystem
 
