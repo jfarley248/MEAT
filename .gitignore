@@ -5,3 +5,8 @@
 *.pyc
 *.pyc
 /.venv
+*.exe
+*.ps1
+*.bat
+*.cfg
+venv/Scripts/activate
