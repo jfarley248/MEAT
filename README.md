@@ -6,9 +6,6 @@ This toolkit aims to help forensicators perform different kinds of acquisitions 
 ##### Requirements to run from source
 * Windows Machine
 * Python 3.7
-* The following packages installed via pip:
-
-`pip.exe install paramiko construct biplist pure-python-adb pyasn1 future six`
 
 ## Types of Acquisitions Supported
 
