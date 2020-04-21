@@ -68,6 +68,10 @@ Process finished with exit code 0
 
 ```
 
+### Known issues
+Unknown iTunes dependancy
+iOS 9 bugs - Don't have device so can't test directly
+
 ### Things to do in the future
 * Add Android support
 * Add ability for the user to specify block device for android physical acquisitions
