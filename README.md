@@ -37,13 +37,13 @@ Using the logical acquisition flag on MEAT will instruct the tool to extract fil
 * Jailbroken iOS Device
 * AFC2 Installed via Cydia
 
-Using the filesystem acquisition flag on MEAT will instruct the tool to tar the root directory, and send over the completed tar file back to the host machine.
+Using the filesystem acquisition flag on MEAT will instruct the tool to start the AFC2 service and copy all files and fodlers back to the host machine.
 
-This method requires the device to be jailbroken with the following packages intstalled:
+This method requires the device to be jailbroken with the following package installed:
 
 * Apple File Conduit 2
 
-This method can also be changed by the user using the -filesystemPath flag to instruct MEAT to only tar up a specified folder, useful if you're doing app analysis and only want the app data.
+This method can also be changed by the user using the -filesystemPath flag to instruct MEAT to only extract up a specified folder, useful if you're doing app analysis and only want the app data.
 
 
 ##### MEAT Help
