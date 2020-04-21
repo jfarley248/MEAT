@@ -13,12 +13,19 @@ This toolkit aims to help forensicators perform different kinds of acquisitions 
 
 #### Logical
 
-Using the logical acquisition flag on MEAT will instruct the tool to extract files and folders accessible through AFC on jailed devices, such as:
-* Camera Roll
+Using the logical acquisition flag on MEAT will instruct the tool to extract files and folders accessible through AFC on jailed devices. The specific folder that allows access is: \private\var\mobile\Media, which includes fodlers such as:
+* AirFair
+* Books
+* DCIM
 * Downloads
+* general_storage
+* iTunes_Control
+* MediaAnalysis
+* PhotoData
+* Photos
+* PublicStaging
+* Purchases
 * Recordings
-* iTunes Sync Data
-* 
 
 #### Filesystem
 
