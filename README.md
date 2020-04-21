@@ -67,9 +67,6 @@ optional arguments:
   -o OUTPUTDIR          Directory to store results
   -v                    increase output verbosity
 
-Process finished with exit code 0
-
-
 ```
 
 ### Known issues
