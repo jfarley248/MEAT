@@ -28,6 +28,10 @@ Using the logical acquisition flag on MEAT will instruct the tool to extract fil
 * Recordings
 
 #### Filesystem
+### iOS Device Prerequisites
+
+* Jailbroken iOS Device
+* AFC2 Installed via Cydia
 
 Using the filesystem acquisition flag on MEAT will instruct the tool to tar the root directory, and send over the completed tar file back to the host machine.
 
@@ -40,33 +44,27 @@ This method can also be changed by the user using the -filesystemPath flag to in
 
 ##### MEAT Help
 ```
-usage: MEAT.py [-h] [-iOS] [-Android] [-filesystem]
-               [-filesystemPath FILESYSTEMPATH] [-logical] [-physical]
-               [-backup] [-ip IP] [-port PORT] [-username USERNAME]
-               [-pw PASSWORD] -o OUTPUTDIR [-v]
+usage: MEAT.py [-h] [-iOS] [-filesystem] [-filesystemPath FILESYSTEMPATH]
+               [-logical] [-md5] [-sha1] -o OUTPUTDIR [-v]
 
 MEAT - Mobile Evidence Acquisition Toolkit
 
 optional arguments:
   -h, --help            show this help message and exit
   -iOS                  Perform Acquisition on iOS Device
-  -Android              Perform Acquisition on Android Device
-  -filesystem           Perform Filesystem Acquisition
-                        	iOS & Android- Uses tar to archive contents of --filesystemPath
+  -filesystem           Perform Filesystem Acquisition - 
   -filesystemPath FILESYSTEMPATH
                         Path on target device to acquire. Only use with --filesystem argument
-                        	Default will be "/"
+                        Default will be "/"
   -logical              Perform Logical Acquisition
-                        	iOS - Uses AFC to gain access to jailed content
-                        	Android - Descrption Not Available
-  -physical             Perform Physical Acquisition
-  -backup               Perform Acquisition via backup, Android only
-  -ip IP                IP Address for acquisition via network. If connecting over USB do not use this argument
-  -port PORT            Port for acquisition via network. If connecting over USB do not use this argument
-  -username USERNAME    Root username for iOS device. Default will be "root"
-  -pw PASSWORD          Root password for device. Default will be "alpine" for iOS
+                        iOS - Uses AFC to gain access to jailed content
+  -md5                  Hash pulled files with the MD5 Algorithm. Outputs to Hash_Table.csv
+  -sha1                 Hash pulled files with the SHA-1 Algorithm. Outputs to Hash_Table.csv
   -o OUTPUTDIR          Directory to store results
   -v                    increase output verbosity
+
+Process finished with exit code 0
+
 
 ```
 
@@ -78,13 +76,5 @@ optional arguments:
 
 
 
-# M.E.A.T Documentation
-
-## iOS Filesystem Acquisition
-
-### iOS Device Prerequisites
-
-* Jailbroken iOS Device under iOS 13
-* AFC2 Installed via Cydia
 
 
