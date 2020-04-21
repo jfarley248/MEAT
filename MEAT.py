@@ -39,29 +39,27 @@ def get_argument():
 
     parser.add_argument("-iOS", help="Perform Acquisition on iOS Device", action="store_true")
 
-    parser.add_argument("-Android", help="Perform Acquisition on Android Device", action="store_true")
+    #parser.add_argument("-Android", help="Perform Acquisition on Android Device", action="store_true")
 
-    parser.add_argument("-filesystem", help="Perform Filesystem Acquisition\n\t"
-                                             "iOS & Android- Uses tar to archive contents of --filesystemPath", action="store_true")
+    parser.add_argument("-filesystem", help="Perform Filesystem Acquisition - ", action="store_true")
 
-    parser.add_argument("-filesystemPath", help="Path on target device to acquire. Only use with --filesystem argument\n\t"
+    parser.add_argument("-filesystemPath", help="Path on target device to acquire. Only use with --filesystem argument\n"
                                                  "Default will be \"/\"", default="/", type=str, dest='filesystemPath')
 
-    parser.add_argument("-logical", help="Perform Logical Acquisition\n\t"
-                                          "iOS - Uses AFC to gain access to jailed content\n\t"
-                                          "Android - Descrption Not Available", action="store_true")
+    parser.add_argument("-logical", help="Perform Logical Acquisition\n"
+                                          "iOS - Uses AFC to gain access to jailed content", action="store_true")
 
-    parser.add_argument("-physical", help="Perform Physical Acquisition", action="store_true")
+    #parser.add_argument("-physical", help="Perform Physical Acquisition", action="store_true")
 
     #parser.add_argument("-backup", help="Perform Acquisition via backup, Android only", action="store_true")
     parser.add_argument("-md5", help="Hash pulled files with the MD5 Algorithm. Outputs to Hash_Table.csv", action="store_true")
     parser.add_argument("-sha1", help="Hash pulled files with the SHA-1 Algorithm. Outputs to Hash_Table.csv", action="store_true")
 
 
-    parser.add_argument("-ip", type=str, dest='ip', help='IP Address for acquisition via network. If connecting over USB do not use this argument', default="localhost")
-    parser.add_argument("-port", type=int, dest='port', help='Port for acquisition via network. If connecting over USB do not use this argument', default=2222)
-    parser.add_argument("-username", type=str, dest='username', help='Root username for iOS device. Default will be \"root\"', default="root")
-    parser.add_argument("-pw", type=str, dest='password', help='Root password for device. Default will be \"alpine\" for iOS', default="alpine")
+    #parser.add_argument("-ip", type=str, dest='ip', help='IP Address for acquisition via network. If connecting over USB do not use this argument', default="localhost")
+    #parser.add_argument("-port", type=int, dest='port', help='Port for acquisition via network. If connecting over USB do not use this argument', default=2222)
+    #parser.add_argument("-username", type=str, dest='username', help='Root username for iOS device. Default will be \"root\"', default="root")
+    #parser.add_argument("-pw", type=str, dest='password', help='Root password for device. Default will be \"alpine\" for iOS', default="alpine")
 
 
 
