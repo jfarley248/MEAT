@@ -14,3 +14,4 @@ venc/*
 venv/Lib/site-packages/easy-install.pth
 venv/Lib/site-packages/pip-19.0.3-py3.7.egg/EGG-INFO/dependency_links.txt
 /venv/
+PYINSTALLER COMMAND
