@@ -1,7 +1,9 @@
 # M.E.A.T. - Mobile Evidence Acquisition Toolkit
 Meet M.E.A.T! 
 
-This toolkit aims to help forensicators perform different kinds of acquisitions on iOS and Android devices.
+This toolkit aims to help forensicators perform different kinds of acquisitions on iOS devices (and Android in the future).
+
+### [Download Here](https://github.com/jfarley248/MEAT/releases/tag/v1.0)
 
 ##### Requirements to run from source
 * Windows Machine
