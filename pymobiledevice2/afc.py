@@ -165,7 +165,7 @@ class AFC2Client(object):
 
 
     def receive_data(self):
-        res = self.service.recv(40)
+        res = self.service.recv_exact(40)
         status = AFC_E_SUCCESS
         data = ""
         if res:
@@ -591,7 +591,7 @@ class AFCClient(object):
 
 
     def receive_data(self):
-        res = self.service.recv(40)
+        res = self.service.recv_exact(40)
         status = AFC_E_SUCCESS
         data = ""
         if res:

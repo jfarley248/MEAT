@@ -38,25 +38,25 @@ class HouseArrestClient(AFCClient):
                         service=None, udid=None, logger=None):
 
         self.logger = logger or logging.getLogger(__name__)
-        self.lockdown = lockdown if lockdown else LockdownClient(udid=udid)
-        self.serviceName = serviceName
-        self.service = service if service else self.lockdown.startService(self.serviceName)
+        lockdownClient = LockdownClient(udid)
+        serviceName = "com.apple.mobile.house_arrest"
+        super(HouseArrestClient, self).__init__(lockdownClient, serviceName)
 
     def stop_session(self):
         self.logger.info("Disconecting...")
         self.service.close()
 
-    def send_command(self, applicationId, cmd="VendDocuments"):
+    def send_command(self, applicationId, cmd="VendContainer"):
         self.service.sendPlist({"Command": cmd, "Identifier": applicationId})
         res = self.service.recvPlist()
         if res.get("Error"):
             self.logger.error("%s : %s", applicationId, res.get("Error"))
-            return
+            return False
         else:
-            return res
+            return True
 
     def shell(self, applicationId, cmd="VendDocuments"):
-        res = self.send_command(applicationId, cmd="VendDocuments")
+        res = self.send_command(applicationId, cmd="VendContainer")
         if res:
             AFCShell(client=self.service).cmdloop()
 

@@ -5,9 +5,9 @@
 #
 # Copyright (c) 2012-2014 "dark[-at-]gotohack.org"
 #
-# This file is part of pymobiledevice2
+# This file is part of pymobiledevice
 #
-# pymobiledevice2 is free software: you can redistribute it and/or modify
+# pymobiledevice is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -29,7 +29,7 @@ import uuid
 import platform
 import time
 import logging
-from biplist import *
+import re
 
 from pymobiledevice2.plist_service import PlistService
 from pymobiledevice2.ca import ca_do_everything
@@ -37,6 +37,7 @@ from pymobiledevice2.util import readHomeFile, writeHomeFile, getHomePath
 from pymobiledevice2.usbmux import usbmux
 
 from six import PY3
+
 if PY3:
     plistlib.readPlistFromString = plistlib.loads
     plistlib.writePlistToString = plistlib.dumps
@@ -46,26 +47,30 @@ if PY3:
 class NotTrustedError(Exception):
     pass
 
+
 class PairingError(Exception):
     pass
+
 
 class NotPairedError(Exception):
     pass
 
+
 class CannotStopSessionError(Exception):
     pass
+
 
 class StartServiceError(Exception):
     def __init__(self, message):
         print("[ERROR] %s" % message)
 
+
 class FatalPairingError(Exception):
     pass
 
 
-
-#we store pairing records and ssl keys in ~/.pymobiledevice2
-HOMEFOLDER = ".pymobiledevice2"
+# we store pairing records and ssl keys in ~/.pymobiledevice
+HOMEFOLDER = ".pymobiledevice"
 MAXTRIES = 20
 
 
@@ -92,7 +97,7 @@ class LockdownClient(object):
         self.allValues = self.getValue()
         self.udid = self.allValues.get("UniqueDeviceID").replace('-','')
         self.UniqueChipID = self.allValues.get("UniqueChipID")
-        self.DevicePublicKey =  self.allValues.get("DevicePublicKey")
+        self.DevicePublicKey = self.allValues.get("DevicePublicKey")
         self.ios_version = self.allValues.get("ProductVersion")
         self.identifier = self.udid
         if not self.identifier:
@@ -103,14 +108,40 @@ class LockdownClient(object):
 
         if not self.validate_pairing():
             self.pair()
-            self.c = PlistService(62078,udid)
+            self.c = PlistService(62078, udid)
             if not self.validate_pairing():
                 raise FatalPairingError
         self.paired = True
         return
 
+    def compare_ios_version(self, ios_version):
+        """
+        currrent_version > ios_version return 1
+        currrent_version = ios_version return 0
+        currrent_version < ios_version return -1
+        :param ios_version:
+        :return: int
+        """
+        version_reg = r'^\d*\.\d*\.?\d*$'
+        if not re.match(version_reg, ios_version):
+            raise Exception('ios_version invalid:%s' % ios_version)
+        a = self.ios_version.split('.')
+        b = ios_version.split('.')
+        length = min(len(a), len(b))
+        for i in range(length):
+            if int(a[i]) < int(b[i]):
+                return -1
+            if int(a[i]) > int(b[i]):
+                return 1
+        if len(a) > len(b):
+            return 1
+        elif len(a) < len(b):
+            return -1
+        else:
+            return 0
+
     def queryType(self):
-        self.c.sendPlist({"Request":"QueryType"})
+        self.c.sendPlist({"Request": "QueryType"})
         res = self.c.recvPlist()
         return res.get("Type")
 
@@ -133,17 +164,94 @@ class LockdownClient(object):
                 raise CannotStopSessionError
             return res
 
-    def read_pair_record_from_file(self,path):
+    def find_by_mac(self, path):
+        raw_mac = self.allValues['WiFiAddress']
+        device_mac = ':'.join(raw_mac[i:i + 2] for i in range(0, len(raw_mac), 2))
+
+        for plist in os.listdir(path):
+            if plist.endswith(".plist") and plist != "SystemConfiguration.plist":
+                plist_path = os.path.join(path, plist)
+                plist_path_handle = open(plist_path, "rb")
+                data = plistlib.readPlist(plist_path_handle)
+                plist_path_handle.close()
+                mac = data['WiFiMACAddress'].strip(":")
+                if device_mac == mac:
+                    return plist_path
+        return None
+
+
+    def validate_pairing(self):
         pair_record = None
+        certPem = None
+        privateKeyPem = None
+
+        if sys.platform == "win32":
+            folder = os.environ["ALLUSERSPROFILE"] + "/Apple/Lockdown/"
+        elif sys.platform == "darwin":
+            folder = "/var/db/lockdown/"
+        elif len(sys.platform) >= 5:
+            if sys.platform[0:5] == "linux":
+                folder = "/var/lib/lockdown/"
         try:
-            with open(path, 'rb') as fd:
-                pair_record = plistlib.readPlist(fd)
-        except IOError as e:
-            self.logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-            self.logger.error("Unable to read: %s", path)
+
+
+            pair_plist = self.find_by_mac(folder)
+            if not os.path.exists(pair_plist):
+                pair_plist = folder + "%s.plist" % self.identifier
+
+            plist_data = open(pair_plist, "rb")
+            pair_record = plistlib.load(plist_data)
+            print("Using iTunes pair record: %s.plist" % self.identifier)
         except:
-            self.logger.error("Unable to read: %s", path)
-        return pair_record
+            print("No iTunes pairing record found for device %s" % self.identifier)
+            if self.compare_ios_version("13.0") >= 0:
+                self.logger.warn("Getting pair record from usbmuxd")
+                client = usbmux.UsbmuxdClient()
+                pair_record = client.get_pair_record(self.udid)
+                x =0
+            else:
+                self.logger.warn("Looking for pymobiledevice pairing record")
+                record = readHomeFile(HOMEFOLDER, "%s.plist" % self.identifier)
+                if record:
+                    pair_record = plistlib.readPlistFromString(record)
+                    self.logger.warn("Found pymobiledevice pairing record for device %s" % self.udid)
+                else:
+                    self.logger.error("No  pymobiledevice pairing record found for device %s" % self.identifier)
+                    return False
+        self.record = pair_record
+
+        if PY3:
+            certPem = pair_record["HostCertificate"]
+            privateKeyPem = pair_record["HostPrivateKey"]
+        else:
+            certPem = pair_record["HostCertificate"].data
+            privateKeyPem = pair_record["HostPrivateKey"].data
+
+        if self.compare_ios_version("11.0") < 0:
+            ValidatePair = {"Label": self.label, "Request": "ValidatePair", "PairRecord": pair_record}
+            self.c.sendPlist(ValidatePair)
+            r = self.c.recvPlist()
+            if not r or r.has_key("Error"):
+                pair_record = None
+                self.logger.error("ValidatePair fail", ValidatePair)
+                return False
+
+        self.hostID = pair_record.get("HostID", self.hostID)
+        self.SystemBUID = pair_record.get("SystemBUID", self.SystemBUID)
+        d = {"Label": self.label, "Request": "StartSession", "HostID": self.hostID, 'SystemBUID': self.SystemBUID}
+        self.c.sendPlist(d)
+        startsession = self.c.recvPlist()
+        self.SessionID = startsession.get("SessionID")
+        if startsession.get("EnableSessionSSL"):
+            self.sslfile = self.identifier + "_ssl.txt"
+            lf = "\n"
+            if PY3:
+                lf = b"\n"
+            self.sslfile = writeHomeFile(HOMEFOLDER, self.sslfile, certPem + lf + privateKeyPem)
+            self.c.ssl_start(self.sslfile, self.sslfile)
+
+        self.paired = True
+        return True
 
     def get_itunes_record_path(self):
         folder = None
@@ -154,59 +262,27 @@ class LockdownClient(object):
         elif len(sys.platform) >= 5:
             if sys.platform[0:5] == "linux":
                 folder = "/var/lib/lockdown/"
-        return folder
-
-
-    def find_by_mac(self, path):
-        raw_mac = self.allValues['WiFiAddress']
-        device_mac = ':'.join(raw_mac[i:i+2] for i in range(0, len(raw_mac), 2))
-
-        for plist in os.listdir(path):
-            if plist.endswith(".plist") and plist != "SystemConfiguration.plist":
-                plist_path = os.path.join(path, plist)
-                data = readPlist(plist_path)
-                mac = data['WiFiMACAddress'].strip(":")
-                if device_mac == mac:
-                    return plist_path
-        return None
-
-
-
-
-    def get_pair_record(self):
-        pair_record = None
-        itune_records_folder_path = self.get_itunes_record_path()
-        if itune_records_folder_path:
-            path = self.find_by_mac(itune_records_folder_path)
-
-            if path is None:
-                self.logger.error("No matching LockDown Plist found. Exiting")
-                sys.exit()
-
-            #path = itune_records_folder_path + "%s.plist" % self.identifier
-            pair_record = self.read_pair_record_from_file(path)
-            if pair_record:
-                self.logger.info("Using iTunes pair record: %s.plist", self.identifier)
+        try:
+            pair_record = plistlib.readPlist(folder + "%s.plist" % self.identifier)
+            print("Using iTunes pair record: %s.plist" % self.identifier)
+        except:
+            print("No iTunes pairing record found for device %s" % self.identifier)
+            if self.compare_ios_version("13.0") >= 0:
+                print("Getting pair record from usbmuxd")
+                client = usbmux.UsbmuxdClient()
+                pair_record = client.get_pair_record(self.udid)
+                x = 0
             else:
-                self.logger.warning("No iTunes pairing record found for device %s", self.identifier)
+                print("Looking for pymobiledevice pairing record")
+                record = readHomeFile(HOMEFOLDER, "%s.plist" % self.identifier)
+                if record:
+                    pair_record = plistlib.readPlistFromString(record)
+                    print("Found pymobiledevice pairing record for device %s" % self.udid)
+                else:
+                    print("No  pymobiledevice pairing record found for device %s" % self.identifier)
+                    return False
+        self.record = pair_record
 
-        if pair_record == None:
-            self.logger.warning("Looking for pymobiledevice2 pairing record...")
-            path = getHomePath(HOMEFOLDER, "%s.plist" %  self.identifier)
-            pair_record = self.read_pair_record_from_file(path)
-            if pair_record:
-                self.logger.info("Found pymobiledevice2 pairing record for device %s", self.udid)
-            else:
-                self.logger.warning("No  pymobiledevice2 pairing record found for device %s", self.identifier)
-
-        return pair_record
-
-    def validate_pairing(self):
-        pair_record = None
-        certPem = None
-        privateKeyPem = None
-
-        pair_record = self.get_pair_record()
         if PY3:
             certPem = pair_record["HostCertificate"]
             privateKeyPem = pair_record["HostPrivateKey"]
@@ -214,7 +290,7 @@ class LockdownClient(object):
             certPem = pair_record["HostCertificate"].data
             privateKeyPem = pair_record["HostPrivateKey"].data
 
-        if int(self.ios_version.split('.')[0]) < 11:
+        if self.compare_ios_version("11.0") < 0:
             ValidatePair = {"Label": self.label, "Request": "ValidatePair", "PairRecord": pair_record}
             self.c.sendPlist(ValidatePair)
             r = self.c.recvPlist()
@@ -230,19 +306,18 @@ class LockdownClient(object):
         startsession = self.c.recvPlist()
         self.SessionID = startsession.get("SessionID")
         if startsession.get("EnableSessionSSL"):
-            sslfile = self.identifier + "_ssl.txt"
+            self.sslfile = self.identifier + "_ssl.txt"
             lf = "\n"
             if PY3:
                 lf = b"\n"
-            sslfile = writeHomeFile(HOMEFOLDER, sslfile, certPem + lf + privateKeyPem)
-            self.c.ssl_start(sslfile, sslfile)
+            self.sslfile = writeHomeFile(HOMEFOLDER, self.sslfile, certPem + lf + privateKeyPem)
+            self.c.ssl_start(self.sslfile, self.sslfile)
 
         self.paired = True
         return True
 
-
     def pair(self):
-        self.DevicePublicKey =  self.getValue("", "DevicePublicKey")
+        self.DevicePublicKey = self.getValue("", "DevicePublicKey")
         if self.DevicePublicKey == '':
             self.logger.error("Unable to retreive DevicePublicKey")
             return False
@@ -255,35 +330,33 @@ class LockdownClient(object):
                        "HostCertificate": plistlib.Data(certPem),
                        "HostID": self.hostID,
                        "RootCertificate": plistlib.Data(certPem),
-                       "SystemBUID": "30142955-444094379208051516" }
+                       "SystemBUID": "30142955-444094379208051516"}
 
         pair = {"Label": self.label, "Request": "Pair", "PairRecord": pair_record}
         self.c.sendPlist(pair)
         pair = self.c.recvPlist()
-        print(pair)
 
-        if pair:
-            if pair.get("Result") == "Success" or pair.get("EscrowBag"):
-                print("kikou")
-                pair_record["HostPrivateKey"] = plistlib.Data(privateKeyPem)
-                pair_record["EscrowBag"] = pair.get("EscrowBag")
-                writeHomeFile(HOMEFOLDER, "%s.plist" % self.identifier, plistlib.writePlistToString(pair_record))
-                self.paired = True
-                return True
-            elif pair.get("Error") == "PasswordProtected":
-                self.c.close()
-                raise NotTrustedError
+        if pair and pair.get("Result") == "Success" or pair.has_key("EscrowBag"):
+            pair_record["HostPrivateKey"] = plistlib.Data(privateKeyPem)
+            pair_record["EscrowBag"] = pair.get("EscrowBag")
+            writeHomeFile(HOMEFOLDER, "%s.plist" % self.identifier, plistlib.writePlistToString(pair_record))
+            self.paired = True
+            return True
+
+        elif pair and pair.get("Error") == "PasswordProtected":
+            self.c.close()
+            raise NotTrustedError
         else:
             self.logger.error(pair.get("Error"))
             self.c.close()
             raise PairingError
 
-
     def getValue(self, domain=None, key=None):
-        if(isinstance(key, str) and hasattr(self, 'record') and hasattr(self.record, key)):
+
+        if (isinstance(key, str) and hasattr(self, 'record') and hasattr(self.record, key)):
             return self.record[key]
 
-        req = {"Request":"GetValue", "Label": self.label}
+        req = {"Request": "GetValue", "Label": self.label}
 
         if domain:
             req["Domain"] = domain
@@ -299,7 +372,7 @@ class LockdownClient(object):
             return r
 
     def setValue(self, value, domain=None, key=None):
-        req = {"Request":"SetValue", "Label": self.label}
+        req = {"Request": "SetValue", "Label": self.label}
 
         if domain:
             req["Domain"] = domain
@@ -312,20 +385,22 @@ class LockdownClient(object):
         self.logger.debug(res)
         return res
 
-
     def startService(self, name):
         if not self.paired:
             self.logger.info("NotPaired")
             raise NotPairedError
 
         self.c.sendPlist({"Label": self.label, "Request": "StartService", "Service": name})
-        StartService = self.c.recvPlist()
-        if not StartService or StartService.get("Error"):
-            raise StartServiceError(StartService.get("Error"))
-        return PlistService(StartService.get("Port"), self.udid)
+        startService = self.c.recvPlist()
+        ssl_enabled = startService.get("EnableServiceSSL", False)
+        if not startService or startService.get("Error"):
+            raise StartServiceError(startService.get("Error"))
+        plist_service = PlistService(startService.get("Port"), self.udid)
+        if ssl_enabled:
+            plist_service.ssl_start(self.sslfile, self.sslfile)
+        return plist_service
 
-
-    def startServiceWithEscrowBag(self, name, escrowBag = None):
+    def startServiceWithEscrowBag(self, name, escrowBag=None):
         if not self.paired:
             self.logger.info("NotPaired")
             raise NotPairedError
@@ -333,13 +408,18 @@ class LockdownClient(object):
         if (not escrowBag):
             escrowBag = self.record['EscrowBag']
 
-        self.c.sendPlist({"Label": self.label, "Request": "StartService", "Service": name, 'EscrowBag':escrowBag})
+        self.c.sendPlist({"Label": self.label, "Request": "StartService", "Service": name, 'EscrowBag': escrowBag})
         StartService = self.c.recvPlist()
         if not StartService or StartService.get("Error"):
             if StartService.get("Error", "") == 'PasswordProtected':
-                raise StartServiceError('your device is protected with password, please enter password in device and try again')
+                raise StartServiceError(
+                    'your device is protected with password, please enter password in device and try again')
             raise StartServiceError(StartService.get("Error"))
-        return PlistService(StartService.get("Port"), self.udid)
+        ssl_enabled = StartService.get("EnableServiceSSL", False)
+        plist_service = PlistService(StartService.get("Port"), self.udid)
+        if ssl_enabled:
+            plist_service.ssl_start(self.sslfile, self.sslfile)
+        return plist_service
 
 
 if __name__ == "__main__":
@@ -351,4 +431,3 @@ if __name__ == "__main__":
         logger.info("Wrote infos to %s",n)
     else:
         logger.error("Unable to connect to device")
-

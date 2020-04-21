@@ -58,12 +58,6 @@ class filesystem(object):
 
         print(device_found_mes)
 
-        if float(lockdown.allValues['ProductVersion']) >= 13:
-            self.logging.error("M.E.A.T. does not support iOS 13 filesystem extractions")
-            self.logging.debug("This is because I believe Apple has done something to the limit root filesystem access "
-                               "on iOS 13. Hopefully a bypass will be achieved")
-            sys.exit()
-
 
         afc2_service = lockdown.startService("com.apple.afc2")
         afc = AFC2Client(lockdown=lockdown)
