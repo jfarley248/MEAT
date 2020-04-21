@@ -1,6 +1,8 @@
 # M.E.A.T. - Mobile Evidence Acquisition Toolkit
 Meet M.E.A.T! 
 
+From Jack Farley -  [BlackStone Discovery](https://www.blackstonediscovery.com/)
+
 This toolkit aims to help forensicators perform different kinds of acquisitions on iOS devices (and Android in the future).
 
 ### [Download Here](https://github.com/jfarley248/MEAT/releases/tag/v1.0)
@@ -80,7 +82,10 @@ iOS 9 bugs - Don't have device so can't test directly
 * Add support for iTunes backups
 * Add Unix and MacOS support (email me if you want this!)
 
-
-
+### Special Thanks
+* BlackStone Discovery
+* [pymobiledevice](https://github.com/iOSForensics/pymobiledevice/tree/master/pymobiledevice)
+* Mathieu Renard for fixing the iOS 13 bug
+* Thanks W.E.
 
 
