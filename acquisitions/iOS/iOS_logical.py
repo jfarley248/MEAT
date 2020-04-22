@@ -35,17 +35,17 @@ class logical(object):
         sn = get_serial(self.logging)
         lockdown = LockdownClient(sn)
 
-        device_found_mes = f"""
-                Device Found!
-                Device Name: {lockdown.allValues['DeviceName']}
-                Device Model: {lockdown.allValues['ProductType']}
-                iOS Version: {lockdown.allValues['ProductVersion']}
-                Device Build: {lockdown.allValues['BuildVersion']}
-                WiFi Address: {lockdown.allValues['WiFiAddress']}
-                Hardware Model: {lockdown.allValues['HardwareModel']}
+        device_found_mes = f"""\n
+Device Found!
+Device Name: {lockdown.allValues['DeviceName']}
+Device Model: {lockdown.allValues['ProductType']}
+iOS Version: {lockdown.allValues['ProductVersion']}
+Device Build: {lockdown.allValues['BuildVersion']}
+WiFi Address: {lockdown.allValues['WiFiAddress']}
+Hardware Model: {lockdown.allValues['HardwareModel']}
                 """
 
-        print(device_found_mes)
+        self.logging.info(device_found_mes)
 
 
         afc_service = lockdown.startService("com.apple.afc")

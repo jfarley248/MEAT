@@ -843,7 +843,7 @@ class AFCClient(object):
                 self.logger.info("%s is directory...", filename)
                 return
 
-            self.logger.info("Reading: %s", filename)
+            self.logger.debug("Reading: %s", filename)
             h = self.file_open(filename)
             if not h:
                 return
