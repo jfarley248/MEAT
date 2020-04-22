@@ -348,10 +348,9 @@ class AFC2Client(object):
                 try:
                     self.dispatch_packet(AFC_OP_READ, struct.pack("<QQ", handle, toRead))
                     s, d = self.receive_data()
-                    if type(d) == str:
-                        print("Data returned is a string, this shouldnt happen")
-                        print("Data is:\n" + d)
-                        print("Not copying this file, please examine it using other methods")
+                    if len(d) == 0:
+                        print(local_file + " appears to be an empty file")
+                        local_file_handle.write(b"")
                     else:
                         local_file_handle.write(d)
                 except:
