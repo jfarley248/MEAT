@@ -348,7 +348,12 @@ class AFC2Client(object):
                 try:
                     self.dispatch_packet(AFC_OP_READ, struct.pack("<QQ", handle, toRead))
                     s, d = self.receive_data()
-                    local_file_handle.write(d)
+                    if type(d) == str:
+                        print("Data returned is a string, this shouldnt happen")
+                        print("Data is:\n" + d)
+                        print("Not copying this file, please examine it using other methods")
+                    else:
+                        local_file_handle.write(d)
                 except:
                     import traceback
                     traceback.print_exc()
