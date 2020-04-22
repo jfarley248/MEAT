@@ -1,11 +1,14 @@
 # M.E.A.T. - Mobile Evidence Acquisition Toolkit
 Meet M.E.A.T! 
 
-This toolkit aims to help forensicators perform different kinds of acquisitions on iOS and Android devices.
+From Jack Farley -  [BlackStone Discovery](https://www.blackstonediscovery.com/)
+
+This toolkit aims to help forensicators perform different kinds of acquisitions on iOS devices (and Android in the future).
+
 
 ##### Requirements to run from source
 * Windows Machine
-* Python 3.7
+* Python 3.7.4 or 3.7.2 (M2Crypto issues, more Python versions will be tested)
 
 ## Types of Acquisitions Supported
 
@@ -33,13 +36,13 @@ Using the logical acquisition flag on MEAT will instruct the tool to extract fil
 * Jailbroken iOS Device
 * AFC2 Installed via Cydia
 
-Using the filesystem acquisition flag on MEAT will instruct the tool to tar the root directory, and send over the completed tar file back to the host machine.
+Using the filesystem acquisition flag on MEAT will instruct the tool to start the AFC2 service and copy all files and fodlers back to the host machine.
 
-This method requires the device to be jailbroken with the following packages intstalled:
+This method requires the device to be jailbroken with the following package installed:
 
 * Apple File Conduit 2
 
-This method can also be changed by the user using the -filesystemPath flag to instruct MEAT to only tar up a specified folder, useful if you're doing app analysis and only want the app data.
+This method can also be changed by the user using the -filesystemPath flag to instruct MEAT to only extract up a specified folder, useful if you're doing app analysis and only want the app data.
 
 
 ##### MEAT Help
@@ -63,9 +66,6 @@ optional arguments:
   -o OUTPUTDIR          Directory to store results
   -v                    increase output verbosity
 
-Process finished with exit code 0
-
-
 ```
 
 ### Known issues
@@ -78,7 +78,10 @@ iOS 9 bugs - Don't have device so can't test directly
 * Add support for iTunes backups
 * Add Unix and MacOS support (email me if you want this!)
 
-
-
+### Special Thanks
+* BlackStone Discovery
+* [pymobiledevice](https://github.com/iOSForensics/pymobiledevice/tree/master/pymobiledevice)
+* Mathieu Renard for fixing the iOS 13 bug
+* Thanks W.E.
 
 
