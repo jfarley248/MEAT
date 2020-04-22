@@ -20,6 +20,8 @@ import struct
 import base64
 from pprint import *
 
+from Crypto.PublicKey import RSA
+
 
 def convertPKCS1toPKCS8pubKey(bitsdata):
     pubkey_pkcs1_b64 = b''.join(bitsdata.split(b'\n')[1:-2])
@@ -45,15 +47,15 @@ def convertPKCS1toPKCS8pubKey(bitsdata):
     res += b"-----END PUBLIC KEY-----\n"
     return res
 
-def generateRSAKey():
-    return RSA.gen_key(2048, m2.RSA_F4)
+#def generateRSAKey():
+#    return RSA.gen_key(2048, m2.RSA_F4)
 
 def makePKey(key):
     pkey = EVP.PKey()
     pkey.assign_rsa(key)
     return pkey
 
-def makeRequest(pkey, cn):
+"""def makeRequest(pkey, cn):
     req = X509.Request()
     req.set_version(2)
     req.set_pubkey(pkey)
@@ -70,8 +72,8 @@ def makeRequest(pkey, cn):
 
     req.add_extensions(extstack)
     # req.sign(pkey, 'sha1')
-    return req
-
+    return req"""
+"""
 def makeCert(req, caPkey):
     pkey = req.get_pubkey()
     # woop = makePKey(generateRSAKey())
@@ -112,7 +114,9 @@ def makeCert(req, caPkey):
     assert(cert.get_ext_at(0).get_value() == 'DNS:foobar.example.com')
 
     return cert
+"""
 
+"""
 def ca():
     key = generateRSAKey()
     pkey = makePKey(key)
@@ -142,3 +146,4 @@ if __name__ == '__main__':
     print(cert.as_text())
     cert.save_pem('my_ca_cert.pem')
     rsa.save_key('my_key.pem', None)
+"""

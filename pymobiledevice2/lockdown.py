@@ -32,7 +32,7 @@ import logging
 import re
 
 from pymobiledevice2.plist_service import PlistService
-from pymobiledevice2.ca import ca_do_everything
+#from pymobiledevice2.ca import ca_do_everything
 from pymobiledevice2.util import readHomeFile, writeHomeFile, getHomePath
 from pymobiledevice2.usbmux import usbmux
 
@@ -316,6 +316,7 @@ class LockdownClient(object):
         self.paired = True
         return True
 
+    """
     def pair(self):
         self.DevicePublicKey = self.getValue("", "DevicePublicKey")
         if self.DevicePublicKey == '':
@@ -350,6 +351,7 @@ class LockdownClient(object):
             self.logger.error(pair.get("Error"))
             self.c.close()
             raise PairingError
+        """
 
     def getValue(self, domain=None, key=None):
 

@@ -29,7 +29,6 @@ import plistlib
 import posixpath
 import logging
 import re
-from progressbar import ProgressBar
 from construct.core import Struct
 from construct.lib.containers import Container
 from construct import Const,  Int64ul
