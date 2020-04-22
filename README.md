@@ -69,6 +69,11 @@ optional arguments:
 
 ```
 
+### Devices tested on
+iPhone X iOS 13.3
+iPhone XS iOS 12.4
+
+
 ### Known issues
 Unknown iTunes dependancy
 iOS 9 bugs - Don't have device so can't test directly
