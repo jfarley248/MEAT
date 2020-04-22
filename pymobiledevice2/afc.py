@@ -547,14 +547,14 @@ class AFC2Client(object):
             if infos and infos.get('st_ifmt') == 'S_IFDIR':
 
                 '''Handle folder creating / pulling'''
-                if fd in windows_reserved_names:
+                if fd.upper() in windows_reserved_names:
                     fd = fd + "_MEAT_RENAMED"
                 self.handle_dir_pull(parent_dir, fd, output)
 
 
             else:
                 '''Handle file creating / pulling'''
-                if fd in windows_reserved_names:
+                if fd.upper() in windows_reserved_names:
                     fd = fd + "_MEAT_RENAMED"
                 self.handle_file_pull(parent_dir, fd, infos, output)
 
@@ -843,7 +843,7 @@ class AFCClient(object):
                 self.logger.info("%s is directory...", filename)
                 return
 
-            self.logger.debug("Reading: %s", filename)
+            self.logger.info("Reading: %s", filename)
             h = self.file_open(filename)
             if not h:
                 return
