@@ -8,7 +8,7 @@ This toolkit aims to help forensicators perform different kinds of acquisitions 
 
 ##### Requirements to run from source
 * Windows Machine
-* Python 3.7
+* Python 3.7.4 or 3.7.2 (M2Crypto issues, more Python versions will be tested)
 
 ## Types of Acquisitions Supported
 
