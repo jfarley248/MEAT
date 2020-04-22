@@ -219,7 +219,10 @@ class AFC2Client(object):
         status, data = self.do_operation(AFC_OP_READ_DIR, dirname)
         if status == AFC_E_SUCCESS:
             if PY3:
-                data = data.decode('utf-8')
+                if type(data) != str:
+                    data = data.decode('utf-8')
+                else:
+                    print("Directory: " + dirname + " is a string, this shouldnt happen")
             return [x for x in data.split("\x00") if x != ""]
         return []
 
