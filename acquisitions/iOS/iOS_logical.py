@@ -52,8 +52,14 @@ class logical(object):
         afc = AFCClient(lockdown=lockdown)
         afc.pull_directory('/', self.output)
         if self.md5 or self.sha1:
-            with open(self.csv_path, "ab") as csvfile:
+            with open(self.csv_path, "w", newline='') as csvfile:
                 csvfile_obj = csv.writer(csvfile)
+                if self.md5 and self.sha1:
+                    csvfile_obj.writerow(["File Name", "Full Path", "MD5", "SHA-1"])
+                elif self.md5:
+                    csvfile_obj.writerow(["File Name", "Full Path", "MD5"])
+                elif self.sha1:
+                    csvfile_obj.writerow(["File Name", "Full Path", "SHA-1"])
                 hasher(self.output, self.md5, self.sha1, csvfile_obj, self.logging)
 
 
