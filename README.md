@@ -5,6 +5,7 @@ From Jack Farley -  [BlackStone Discovery](https://www.blackstonediscovery.com/)
 
 This toolkit aims to help forensicators perform different kinds of acquisitions on iOS devices (and Android in the future).
 
+### [Download Here](https://github.com/jfarley248/MEAT/releases/tag/v1.0.1)
 
 ##### Requirements to run from source
 * Windows Machine
