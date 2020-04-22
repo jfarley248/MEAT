@@ -62,6 +62,7 @@ class filesystem(object):
         afc2_service = lockdown.startService("com.apple.afc2")
         afc = AFC2Client(lockdown=lockdown)
 
+        self.remoteFolder = self.remoteFolder.replace('\'', '')
 
         afc.pull_directory(self.remoteFolder, self.output)
         if self.md5 or self.sha1:
