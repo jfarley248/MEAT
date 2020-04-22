@@ -5,3 +5,4 @@ progressbar
 construct
 paramiko
 psutil
+pyasn1
