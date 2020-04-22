@@ -25,24 +25,6 @@ from pymobiledevice2.usbmux.usbmux import USBMux
 BLOCKSIZE = 65536
 
 
-def setup_csv(csv_path, md5, sha1):
-    """
-    Sets up Hash_Table.csv to track all file hashes
-    :param csv_path: Path to the CSV file to write to
-    :param md5: Boolean value if MD5 algorithm is chosen
-    :param sha1: Boolean value if SHA-1 algorithm is chosen
-    :return:
-    """
-    with open(csv_path, 'w', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile)
-
-        if md5 and sha1:
-            csv_writer.writerow(["File Name", "Full Path", "MD5", "SHA-1"])
-        elif md5:
-            csv_writer.writerow(["File Name", "Full Path", "MD5"])
-        elif sha1:
-            csv_writer.writerow(["File Name", "Full Path", "SHA-1"])
-
 
 def get_serial(log):
     mux = USBMux()

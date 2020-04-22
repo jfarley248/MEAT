@@ -7,7 +7,7 @@
 '''
 
 import csv
-from helpers.system2 import get_serial, setup_csv, hasher
+from helpers.system2 import get_serial, hasher
 from pymobiledevice2.lockdown import LockdownClient
 from pymobiledevice2.afc import AFCShell, AFCClient
 
@@ -21,16 +21,6 @@ class logical(object):
         self.sha1 = sha1
 
         '''Start Hash CSV handling'''
-
-        if self.sha1 and self.md5:
-            logging.info("User has chose to hash files with both MD5 and SHA-1 algorithms")
-            setup_csv(self.csv_path, self.md5, self.sha1)
-        if self.sha1 and not self.md5:
-            logging.info("User has chose to hash files with the SHA-1 algorithm")
-            setup_csv(self.csv_path, self.md5, self.sha1)
-        if not self.sha1 and self.md5:
-            logging.info("User has chose to hash files with the MD5 algorithm")
-            setup_csv(self.csv_path, self.md5, self.sha1)
         if not self.sha1 and not self.md5:
             logging.debug("User has chose not to hash files")
             self.csv_path = None
