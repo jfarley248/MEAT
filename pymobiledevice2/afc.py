@@ -507,7 +507,7 @@ class AFC2Client(object):
             new_folder = parent_dir + '/' + fd
 
         new_folder = re.sub('[<>:"|?*]', '_', new_folder)
-        local_folder = output + "\\" + new_folder.strip()
+        local_folder = os.path.join(output, new_folder.strip())
         if not os.path.exists(local_folder):
             self.logger.info("Creating Folder: " + new_folder)
             os.makedirs(local_folder)
@@ -524,14 +524,14 @@ class AFC2Client(object):
             new_file = parent_dir + '/' + fd
 
         new_file = re.sub('[<>:"|?*]', '_', new_file)
-        local_file = output + "\\" + new_file.strip()
+        local_file = os.path.join(output, new_file.strip())
         parent_local_folder = (local_file[::-1].split("/"))
         local_single_file = parent_local_folder[0][::-1]
         del parent_local_folder[0]
-        parent_local_folder = ("\\".join(parent_local_folder))[::-1]
+        parent_local_folder = (os.sep.join(parent_local_folder))[::-1]
         if parent_local_folder.endswith(' '):
             parent_local_folder = parent_local_folder[:-1]
-            local_file = parent_local_folder + "\\" + local_single_file
+            local_file = os.path.join(parent_local_folder, local_single_file)
         if not os.path.exists(parent_local_folder):
             os.makedirs(parent_local_folder)
         if infos is not None:
@@ -949,7 +949,7 @@ class AFCClient(object):
                     new_folder = parent_dir + '/' + fd
 
                 new_folder = re.sub('[<>:"|?*]', '_', new_folder)
-                local_folder = output + "\\" + new_folder.strip()
+                local_folder = os.path.join(output, new_folder.strip())
                 if not os.path.exists(local_folder):
                     self.logger.info("Creating Folder: " + new_folder)
                     os.makedirs(local_folder)
@@ -968,15 +968,15 @@ class AFCClient(object):
                     new_file = parent_dir + '/' + fd
 
                 new_file = re.sub('[<>:"|?*]', '_', new_file)
-                local_file = output + "\\" + new_file.strip()
+                local_file = os.path.join(output, new_file.strip())
                 #self.download_file(new_file, local_file)
                 parent_local_folder = (local_file[::-1].split("/"))
                 local_single_file = parent_local_folder[0][::-1]
                 del parent_local_folder[0]
-                parent_local_folder = ("\\".join(parent_local_folder))[::-1]
+                parent_local_folder = (os.sep.join(parent_local_folder))[::-1]
                 if parent_local_folder.endswith(' '):
                     parent_local_folder = parent_local_folder[:-1]
-                    local_file = parent_local_folder + "\\" + local_single_file
+                    local_file = os.path.join(parent_local_folder, local_single_file)
                 if not os.path.exists(parent_local_folder):
                     os.makedirs(parent_local_folder)
                 if infos is not None:
@@ -1336,7 +1336,7 @@ class AFC2Shell(Cmd):
                     new_folder = parent_dir + '/' + fd
 
                 new_folder = re.sub('[<>:"|?*]', '_', new_folder)
-                local_folder = output + "\\" + new_folder.strip()
+                local_folder = os.path.join(output, new_folder.strip())
                 if not os.path.exists(local_folder):
                     self.logger.info("Creating Folder: " + new_folder)
                     os.makedirs(local_folder)
@@ -1355,15 +1355,15 @@ class AFC2Shell(Cmd):
                     new_file = parent_dir + '/' + fd
 
                 new_file = re.sub('[<>:"|?*]', '_', new_file)
-                local_file = output + "\\" + new_file.strip()
+                local_file = os.path.join(output, new_file.strip())
                 #self.download_file(new_file, local_file)
                 parent_local_folder = (local_file[::-1].split("/"))
                 local_single_file = parent_local_folder[0][::-1]
                 del parent_local_folder[0]
-                parent_local_folder = ("\\".join(parent_local_folder))[::-1]
+                parent_local_folder = (os.sep.join(parent_local_folder))[::-1]
                 if parent_local_folder.endswith(' '):
                     parent_local_folder = parent_local_folder[:-1]
-                    local_file = parent_local_folder + "\\" + local_single_file
+                    local_file = os.path.join(parent_local_folder, local_single_file)
                 if not os.path.exists(parent_local_folder):
                     os.makedirs(parent_local_folder)
                 if infos is not None:

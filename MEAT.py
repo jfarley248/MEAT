@@ -74,7 +74,7 @@ def get_argument():
 
 
     '''Log output path'''
-    logOut = args.outputDir + '\\MEAT.log'
+    logOut = os.path.join(args.outputDir, 'MEAT.log')
     if not os.path.isdir(args.outputDir):
         os.makedirs(args.outputDir)
 
@@ -104,7 +104,7 @@ def main():
     args = get_argument()
 
     '''Log output path'''
-    csv_path = args.outputDir + '\\Hash_Table.csv'
+    csv_path = os.path.join(args.outputDir, 'Hash_Table.csv')
 
     '''Starts iOS Acquisitions'''
     if args.iOS:
@@ -113,7 +113,7 @@ def main():
         if args.filesystem:
             try:
                 logging.info("Starting iOS Filesystem Acquisition")
-                filesystem_output = args.outputDir + "\\iOS_Filesystem"
+                filesystem_output = os.path.join(args.outputDir, "iOS_Filesystem")
                 iOS_filesystem.filesystem( filesystem_output, args.filesystemPath, args.md5, args.sha1, csv_path, logging)
 
             except Exception as ex:
@@ -123,7 +123,7 @@ def main():
         if args.logical:
             try:
                 logging.info("Starting iOS Logical Acquisition")
-                logical_output = args.outputDir + "\\iOS_Logical"
+                logical_output = os.path.join(args.outputDir, "iOS_Logical")
                 iOS_logical.logical(logical_output, args.md5, args.sha1, csv_path, logging)
 
             except Exception as ex:

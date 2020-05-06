@@ -17,6 +17,7 @@ import os
 import stat
 import hashlib
 import csv
+from pathlib import Path
 import glob
 from pymobiledevice2.usbmux.usbmux import USBMux
 
@@ -64,14 +65,27 @@ def md5_hasher(file_path):
     md5_hash_value = sha1_hash_obj.hexdigest()
     return md5_hash_value
 
+# https://treyhunner.com/2019/01/no-really-pathlib-is-great/
+def find_files(filepath):
+    for path in Path(filepath).rglob('*'):
+        if path.is_file():
+            yield path
+
+
 def hasher(path, md5, sha1, csv_file, log):
 
     file_list = []
     hash_list = []
     files = [f for f in glob.glob(path + "/**/*", recursive=True)]
+    if os.path.exists(path):
+        x = 0
+    else:
+        x = 0
+    for path_file in find_files(path):
+        x =0
     for full_file_path in files:
         if os.path.isfile(full_file_path):
-            filename = full_file_path.split("\\")[::-1][0]
+            filename = full_file_path.split(os.sep)[::-1][0]
 
             if sha1 and md5:
                 log.debug("SHA-1 Hashing: " + full_file_path)
@@ -98,7 +112,7 @@ def md5Hash(path, hash_to_check = None, hash_check_type = None, return_dict = No
     file_list = []
     hash_list = []
 
-    files = [f for f in glob.glob(path + "/**/*", recursive=True)]
+    files = [f for f in glob.glob(str(path) + "/**/*", recursive=True)]
     for filename in files:
         if os.path.isfile(filename):
             hasher = hashlib.md5()
@@ -175,7 +189,7 @@ def downloadFolder(sftp, remote_folder, local_folder, folder_name, log):
         full_dir_path = remote_folder
 
     '''Create empty directory of same name to local folder'''
-    local_folder = local_folder + "\\" + folder_name
+    local_folder = os.path.join(local_folder, folder_name)
 
     '''Strip bad chars out from path so Windows won't die'''
     local_folder = local_folder.strip()
@@ -214,7 +228,7 @@ def downloadFile(sftp, remote_file, local_folder, file_name, log):
         x = 0
 
     '''The local file that will be created on the host machine'''
-    local_file = local_folder + "\\" + file_name
+    local_file = os.path.join(local_folder, file_name)
 
     try:
         sftp.get(remote_file, local_file)
@@ -263,7 +277,7 @@ def downloadRecursiveSftp(sftp, remote_folder, local_folder, log):
 
     """Special processing for root directory"""
     if remote_folder == "/":
-        local_folder = local_folder + "\\" + "iOS_FILESYSTEM"
+        local_folder = os.path.join(local_folder, "iOS_FILESYSTEM")
         '''Creates new folder if it does not exist'''
         if not os.path.exists(local_folder):
             os.makedirs(local_folder)
@@ -347,9 +361,9 @@ def downloadRecursiveSftp2(sftp, remote_folder, local_folder, log):
     #test(sftp)
 
     if remote_folder != "/":
-        ios_to_win = remote_folder.replace("/", "\\")
+        ios_to_win = remote_folder.replace("/", os.sep)
         local_extraction_folder = local_folder + ios_to_win
-        local_extraction_folder = local_extraction_folder.replace("\\\\", "\\")
+        local_extraction_folder = os.path.normpath(local_extraction_folder)
     else:
         local_extraction_folder = local_folder
     if not os.path.isdir(local_extraction_folder):
@@ -364,25 +378,25 @@ def downloadRecursiveSftp2(sftp, remote_folder, local_folder, log):
 
         else:
             remote_file = remote_folder + "/" + fileattr.filename
-            local_extraction_file = local_extraction_folder + "\\" + fileattr.filename
+            local_extraction_file = os.path.join(local_extraction_folder, fileattr.filename)
             log.debug("Extracting file: " + str(remote_file) + " to " + str(local_extraction_folder))
 
             #sftp.get(remote_file, local_extraction_file)
             if stat.S_ISLNK(fileattr.st_mode) != 0:
 
                 if "/" not in sftp.readlink(remote_file):
-                    dest = (local_extraction_file).replace("/", "\\")
-                    source = (local_folder + remote_folder + "\\" + sftp.readlink(remote_file)).replace("/", "\\")
+                    dest = os.path.normpath(local_extraction_file)
+                    source = os.path.normpath(local_folder + remote_folder + os.sep + sftp.readlink(remote_file))
                     os.symlink(source, dest)
                 else:
                     resolved_sym = sftp.readlink(remote_file)
                     new_local_path = (((local_folder + resolved_sym)[::-1]).split("/"))
                     del new_local_path[0]
-                    new_local_path = ("\\".join(new_local_path))[::-1]
+                    new_local_path = (os.sep.join(new_local_path))[::-1]
                     if not os.path.isdir(new_local_path):
                         os.makedirs(new_local_path)
-                    #sftp.get(resolved_sym, new_local_path + "\\" + fileattr.filename)
-                    source = new_local_path + "\\" + fileattr.filename
+                    #sftp.get(resolved_sym, new_local_path + os.sep + fileattr.filename)
+                    source = new_local_path + os.sep + fileattr.filename
                     #os.symlink(source, local_extraction_file)
             else:
                 #sftp.get(remote_file, local_extraction_file)

@@ -108,6 +108,9 @@ class BinaryProtocol(object):
             return {'Number': struct.unpack("I", payload)[0]}
         elif resp == self.TYPE_DEVICE_ADD:
             devid, usbpid, serial, pad, location = struct.unpack("IH256sHI", payload)
+            # On Linux, serial will return bytes, so lets check for bytes. Thanks Ridale
+            if type(serial) == bytes:
+                serial = serial.decode("utf-8")
             serial = serial.split("\0")[0]
             return {'DeviceID': devid,
                     'Properties': {'LocationID': location, 'SerialNumber': serial, 'ProductID': usbpid}}
