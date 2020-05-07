@@ -457,7 +457,7 @@ class AFC2Client(object):
             new_folder = parent_dir + '/' + fd
 
         new_folder = re.sub('[<>:"|?*]', '_', new_folder)
-        local_folder = os.path.join(output, new_folder.strip())
+        local_folder = output + new_folder.strip()
         if not os.path.exists(local_folder):
             self.logger.info("Creating Folder: " + new_folder)
             os.makedirs(local_folder)
