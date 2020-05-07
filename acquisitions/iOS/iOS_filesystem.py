@@ -6,11 +6,13 @@
    iOS_filesystem.py
 '''
 
-import sys
+import os
 import csv
 from helpers.system2 import get_serial, hasher
 from pymobiledevice2.lockdown import LockdownClient
-from pymobiledevice2.afc import AFC2Client
+from pymobiledevice2.afc2 import AFC2Client
+import zipfile
+
 
 
 
@@ -20,8 +22,10 @@ class filesystem(object):
     def __init__(self, output, remoteFolder, md5, sha1, csv_path, logging):
         self.logging = logging or logging.getLogger(__name__)
         self.output = output
+        self.temp_dir = output + "TEMP"
         self.remoteFolder = remoteFolder
         self.csv_path = csv_path
+        #self.mode = mode
         self.md5 = md5
         self.sha1 = sha1
 
@@ -52,7 +56,7 @@ Hardware Model: {lockdown.allValues['HardwareModel']}
 
 
         afc2_service = lockdown.startService("com.apple.afc2")
-        afc = AFC2Client(lockdown=lockdown)
+        afc = AFC2Client(self, lockdown=lockdown, logger=self.logging)
 
         self.remoteFolder = self.remoteFolder.replace('\'', '')
 
@@ -67,5 +71,3 @@ Hardware Model: {lockdown.allValues['HardwareModel']}
                 elif self.sha1:
                     csvfile_obj.writerow(["File Name", "Full Path", "SHA-1"])
                 hasher(self.output, self.md5, self.sha1, csvfile_obj, self.logging)
-
-

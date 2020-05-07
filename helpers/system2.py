@@ -26,6 +26,9 @@ from pymobiledevice2.usbmux.usbmux import USBMux
 BLOCKSIZE = 65536
 
 
+#https://stackoverflow.com/questions/11617450/check-if-a-directory-exists-in-a-zip-file-with-python
+def zipisdir(z, name):
+    return any(x.startswith("%s/" % name.rstrip("/")) for x in z.namelist())
 
 def get_serial(log):
     mux = USBMux()

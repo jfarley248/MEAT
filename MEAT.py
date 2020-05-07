@@ -21,7 +21,6 @@ from acquisitions.iOS import iOS_filesystem, iOS_physical, iOS_logical, iOS_back
 
 
 ASCII_BANNER2 = '''
-
 ███╗   ███╗   ███████╗    █████╗ ████████╗
 ████╗ ████║   ██╔════╝   ██╔══██╗╚══██╔══╝
 ██╔████╔██║   █████╗     ███████║   ██║   
@@ -68,6 +67,11 @@ def get_argument():
 
     parser.add_argument("-v", help="increase output verbosity", action="store_true")
 
+    #parser.add_argument("-outputType",
+    #                    help="What the output will be, FOLDER, ZIP, or TAR\n"
+    #                         "Default will be FOLDER", default="FOLDER", type=str, dest='output_type')
+
+
     args = parser.parse_args()
 
 
@@ -106,6 +110,17 @@ def main():
     '''Log output path'''
     csv_path = os.path.join(args.outputDir, 'Hash_Table.csv')
 
+    #mode = -1
+    #if args.output_type == "FOLDER":
+    #    mode = 0
+    #if args.output_type == "ZIP":
+    #    mode = 1
+    #if args.output_type == "TAR":
+    #    mode = 2
+    #if mode == -1:
+    #    logging.error("You did not enter a valid outputType. Try again")
+    #    return
+
     '''Starts iOS Acquisitions'''
     if args.iOS:
 
@@ -139,7 +154,6 @@ def main():
     '''Starts Android Acquisitions'''
     '''
     if args.Android:
-
         #Starts Android Logical Acquisition
         if args.logical:
             try:

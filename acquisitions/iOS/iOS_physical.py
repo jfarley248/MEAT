@@ -13,7 +13,7 @@ from subprocess import Popen
 from helpers import system
 from pymobiledevice2.usbmux.usbmux import USBMux
 from pymobiledevice2.lockdown import LockdownClient
-from pymobiledevice2.afc import AFCShell, AFC2Client
+
 
 class physical(object):
 
