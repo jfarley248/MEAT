@@ -32,7 +32,8 @@ import re
 from construct.core import Struct
 from construct.lib.containers import Container
 from construct import Const,  Int64ul
-
+from datetime import datetime
+import time
 from pymobiledevice2.lockdown import LockdownClient
 
 from cmd import Cmd
@@ -553,6 +554,10 @@ class AFCClient(object):
                     if infos['st_size'] == '0':
                         open(local_file, 'a').close()
                 self.pull_file(new_file, local_file)
+
+                modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
+                modTime = time.mktime(modify_time.timetuple())
+                os.utime(local_file, (modTime, modTime))
 
 
 class AFCShell(Cmd):
