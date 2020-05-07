@@ -42,6 +42,8 @@ from past.builtins import xrange
 from six import PY3
 from pymobiledevice2.util import hexdump, parsePlist
 from pprint import pprint
+if os.name == 'nt':
+    from win32_setctime import setctime
 
 from pymobiledevice2.lockdown import LockdownClient
 from pymobiledevice2.util import hexdump, parsePlist
@@ -323,9 +325,18 @@ class AFC2Client(object):
                 sz -= toRead
                 #data += d
 
+        # Change modify times
         modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
         modTime = time.mktime(modify_time.timetuple())
         os.utime(local_file, (modTime, modTime))
+
+        birth_time = int(infos['st_birthtime']) // 1000000000
+
+
+        # Change creation time on windows
+        if os.name == 'nt':
+            setctime(local_file, birth_time)
+
         return
 
 
