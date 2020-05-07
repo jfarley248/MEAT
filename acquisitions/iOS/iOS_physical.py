@@ -7,7 +7,7 @@
 '''
 
 import time
-import paramiko
+#import paramiko
 import sys
 from subprocess import Popen
 from helpers import system

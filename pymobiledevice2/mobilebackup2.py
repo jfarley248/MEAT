@@ -27,7 +27,7 @@ import os
 import datetime
 import plistlib
 import logging
-from psutil import disk_usage
+#from psutil import disk_usage
 from optparse import OptionParser
 from pprint import pprint
 from time import mktime, gmtime
