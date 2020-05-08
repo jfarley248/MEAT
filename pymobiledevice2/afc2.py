@@ -414,8 +414,11 @@ class AFC2Client(object):
                     yield walk_result
 
     def pull_file(self, remote_file, local_file):
-        if not os.path.isfile(local_file):
+        local_file = local_file.replace("/", os.sep)
+        if not os.path.exists(local_file):
             self.get_file_contents_v2(remote_file, local_file)
+        else:
+            x = 0
 
 
 
@@ -474,7 +477,7 @@ class AFC2Client(object):
             new_file = parent_dir + '/' + fd
 
         new_file = re.sub('[<>:"|?*]', '_', new_file)
-        local_file = os.path.join(output, new_file.strip())
+        local_file = output + os.sep + new_file.strip()
         parent_local_folder = (local_file[::-1].split("/"))
         local_single_file = parent_local_folder[0][::-1]
         del parent_local_folder[0]

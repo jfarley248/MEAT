@@ -930,7 +930,7 @@ class AFC2Shell(Cmd):
                     new_file = parent_dir + '/' + fd
 
                 new_file = re.sub('[<>:"|?*]', '_', new_file)
-                local_file = os.path.join(output, new_file.strip())
+                local_file = output + os.sep() + new_file.strip()
                 #self.download_file(new_file, local_file)
                 parent_local_folder = (local_file[::-1].split("/"))
                 local_single_file = parent_local_folder[0][::-1]
