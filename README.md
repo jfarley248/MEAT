@@ -8,8 +8,9 @@ This toolkit aims to help forensicators perform different kinds of acquisitions 
 ### [Download Here](https://github.com/jfarley248/MEAT/releases/tag/v1.0.3)
 
 ##### Requirements to run from source
-* Windows Machine
-* Python 3.7.4 or 3.7.2 (M2Crypto issues, more Python versions will be tested)
+* Windows or Linux
+* Python 3.7.4 or 3.7.2 
+* Pip packages seen in requirements.txt
 
 ## Types of Acquisitions Supported
 
@@ -75,14 +76,20 @@ iPhone XS iOS 12.4
 
 
 ### Known issues
-Unknown iTunes dependancy
-iOS 9 bugs - Don't have device so can't test directly
+* Folder timestamp preservation
+* Can't preserve birth time of files on Linux only
+* iOS 9 bugs - Don't have device so can't test directly
 
-### Things to do in the future
-* Add Android support
+### Things to do in the future - Ranked
+* Add post processors
+* Add ability to containerize - ZIP, TAR, AFF4
+    * I tried to containerize while processing, but zipfile and tar don't allow me to keep appending blocks to individual files
+* Add keyword searching while processing or after
+* Add hash matching while processing or after
+* Add Android support (Some code can already do this, but I don't have a device to test on)
 * Add ability for the user to specify block device for android physical acquisitions
 * Add support for iTunes backups
-* Add Unix and MacOS support (email me if you want this!)
+* Add MacOS support (message me if you want this!)
 
 ### Special Thanks
 * BlackStone Discovery
