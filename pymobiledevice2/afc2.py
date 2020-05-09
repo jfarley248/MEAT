@@ -465,6 +465,13 @@ class AFC2Client(object):
             self.logger.info("Creating Folder: " + new_folder)
             os.makedirs(local_folder)
 
+        infos = self.get_file_info(posixpath.join(parent_dir, fd))
+        # Change modify times
+        modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
+        modTime = time.mktime(modify_time.timetuple())
+        os.utime(local_folder, (modTime, modTime))
+
+
         if new_folder is not '':
             self.pull_directory(new_folder, output)
 
