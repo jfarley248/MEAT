@@ -16,19 +16,73 @@ import logging
 import os
 import stat
 import hashlib
-import csv
+import shutil
 from pathlib import Path
 import glob
 from pymobiledevice2.usbmux.usbmux import USBMux
-
+import time
+import zipfile
+import tarfile
 
 
 BLOCKSIZE = 65536
 
 
+
+
+
+#https://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory-in-python
+def zip_dir(folder, zip_handle):
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            zip_handle.write(os.path.join(root, file))
+
+
+#https://stackoverflow.com/questions/13118029/deleting-folders-in-python-recursively
+def remove_dir(folder):
+    shutil.rmtree(folder)
+
 #https://stackoverflow.com/questions/11617450/check-if-a-directory-exists-in-a-zip-file-with-python
 def zipisdir(z, name):
     return any(x.startswith("%s/" % name.rstrip("/")) for x in z.namelist())
+
+
+
+def handle_zip_pull(acq_type, output, acq_output, logger):
+    logger.info("Starting zipping now")
+    zip_time_start = time.perf_counter()
+
+    zip_name = acq_type + ".zip"
+    output_zip = os.path.join(output, zip_name)
+    output_zip_handle = zipfile.ZipFile(output_zip, "w")
+    zip_dir(acq_output, output_zip_handle)
+
+    zip_time_stop = time.perf_counter()
+    total_zip_time = (zip_time_stop - zip_time_start) / 60
+    logger.info("Zipping finished in: " + str(total_zip_time) + " minutes")
+
+    logger.info("Removing temp files now")
+    remove_dir(acq_output)
+    logger.info("Removed temp files")
+
+
+def handle_tar_pull(acq_type, output, acq_output, logger):
+    logger.info("Starting tarring now")
+    tar_time_start = time.perf_counter()
+
+    output_tar = os.path.join(output, acq_type)
+
+    with tarfile.open(output_tar + '.tar.gz', mode='w:gz') as archive:
+        archive.add(acq_output, recursive=True)
+
+    tar_time_stop = time.perf_counter()
+    total_tar_time = (tar_time_stop - tar_time_start) / 60
+    logger.info("Tarring finished in: " + str(total_tar_time) + " minutes")
+
+    logging.info("Removing temp files now")
+    remove_dir(acq_output)
+    logger.info("Removed temp files")
+
 
 def get_serial(log):
     mux = USBMux()
@@ -80,12 +134,6 @@ def hasher(path, md5, sha1, csv_file, log):
     file_list = []
     hash_list = []
     files = [f for f in glob.glob(path + "/**/*", recursive=True)]
-    if os.path.exists(path):
-        x = 0
-    else:
-        x = 0
-    for path_file in find_files(path):
-        x =0
     for full_file_path in files:
         if os.path.isfile(full_file_path):
             filename = full_file_path.split(os.sep)[::-1][0]
@@ -224,11 +272,6 @@ def downloadFolder(sftp, remote_folder, local_folder, folder_name, log):
 
 def downloadFile(sftp, remote_file, local_folder, file_name, log):
 
-    #log.info(str(remote_file))
-    #log.info(str(file_name))
-
-    if "fsevent" in remote_file or "fsevent" in file_name:
-        x = 0
 
     '''The local file that will be created on the host machine'''
     local_file = os.path.join(local_folder, file_name)
@@ -245,9 +288,6 @@ def downloadSymFile(sftp, remote_file, local_folder, sym_file_name, log):
 
 
 def checkData(sftp, remote_folder, local_folder, permissions, object_name, log):
-
-
-
 
 
     '''Check is object folder AND NOT a symlink'''

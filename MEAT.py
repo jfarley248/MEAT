@@ -15,7 +15,9 @@ import time
 from datetime import datetime
 from argparse import ArgumentParser, RawTextHelpFormatter
 from helpers import system2
+import zipfile
 import sys
+import tarfile
 from acquisitions.iOS import iOS_filesystem, iOS_physical, iOS_logical, iOS_backup
 #from acquisitions.Android import Android_logical, Android_backup, Android_physical
 
@@ -67,9 +69,9 @@ def get_argument():
 
     parser.add_argument("-v", help="increase output verbosity", action="store_true")
 
-    #parser.add_argument("-outputType",
-    #                    help="What the output will be, FOLDER, ZIP, or TAR\n"
-    #                         "Default will be FOLDER", default="FOLDER", type=str, dest='output_type')
+    parser.add_argument("-outputType",
+                        help="What the output will be, FOLDER, ZIP, or TAR\n"
+                             "Default will be FOLDER", default="FOLDER", type=str, dest='output_type')
 
 
     args = parser.parse_args()
@@ -107,19 +109,26 @@ def main():
     '''Gets arguments'''
     args = get_argument()
 
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    logging.info("Extraction Starting on: " + dt_string + " Local Time")
+    time_start = time.perf_counter()
+
+
+
     '''Log output path'''
     csv_path = os.path.join(args.outputDir, 'Hash_Table.csv')
 
-    #mode = -1
-    #if args.output_type == "FOLDER":
-    #    mode = 0
-    #if args.output_type == "ZIP":
-    #    mode = 1
-    #if args.output_type == "TAR":
-    #    mode = 2
-    #if mode == -1:
-    #    logging.error("You did not enter a valid outputType. Try again")
-    #    return
+    mode = -1
+    if args.output_type.upper() == "FOLDER":
+        mode = 0
+    if args.output_type.upper() == "ZIP":
+        mode = 1
+    if args.output_type.upper() == "TAR":
+        mode = 2
+    if mode == -1:
+        logging.error("You did not enter a valid outputType. Try again")
+        return
 
     '''Starts iOS Acquisitions'''
     if args.iOS:
@@ -131,6 +140,12 @@ def main():
                 filesystem_output = os.path.join(args.outputDir, "iOS_Filesystem")
                 iOS_filesystem.filesystem( filesystem_output, args.filesystemPath, args.md5, args.sha1, csv_path, logging)
 
+                if mode == 1:
+                    system2.handle_zip_pull("iOS_Filesystem", args.outputDir, filesystem_output, logging)
+
+                if mode == 2:
+                    system2.handle_tar_pull("iOS_Filesystem", args.outputDir, filesystem_output, logging)
+
             except Exception as ex:
                 logging.exception("Exception while performing iOS Filesystem Acquisition. Exception was: " + str(ex))
 
@@ -140,6 +155,12 @@ def main():
                 logging.info("Starting iOS Logical Acquisition")
                 logical_output = os.path.join(args.outputDir, "iOS_Logical")
                 iOS_logical.logical(logical_output, args.md5, args.sha1, csv_path, logging)
+
+                if mode == 1:
+                    system2.handle_zip_pull("iOS_Logical", args.outputDir, logical_output, logging)
+
+                if mode == 2:
+                    system2.handle_tar_pull("iOS_Logical", args.outputDir, logical_output, logging)
 
             except Exception as ex:
                 logging.exception("Exception while performing iOS Logical Acquisition. Exception was: " + str(ex))
@@ -192,18 +213,15 @@ def main():
                 
     '''
 
+    time_stop = time.perf_counter()
+    total_time = (time_stop - time_start) / 60
+    logging.info("Program finished in: " + str(total_time) + " minutes")
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    logging.info("Program Finished on: " + dt_string + " Local Time")
 
 if __name__ == "__main__":
     print(
         ASCII_BANNER2 + "M.E.A.T. - Mobile Evidence Acquisition Toolkit\nWritten by Jack Farley - BlackStone Discovery\n\n")
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    print("Extraction Starting on: ", dt_string, " Local Time")
-    time_start = time.perf_counter()
+
     main()
-    time_stop = time.perf_counter()
-    total_time = (time_stop - time_start) / 60
-    print("Extraction finished in: " + str(total_time) + " minutes")
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    print("Extraction Finished on: ", dt_string, " Local Time")

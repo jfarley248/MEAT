@@ -25,7 +25,6 @@ class filesystem(object):
         self.temp_dir = output + "TEMP"
         self.remoteFolder = remoteFolder
         self.csv_path = csv_path
-        #self.mode = mode
         self.md5 = md5
         self.sha1 = sha1
 
