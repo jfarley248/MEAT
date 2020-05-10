@@ -462,6 +462,7 @@ class AFCClient(object):
                     yield walk_result
 
     def pull_file(self, remote_file, local_file):
+        local_file = local_file.replace('/', os.sep)
         if not os.path.isfile(local_file):
             self.get_file_contents_v2(remote_file, local_file)
 
@@ -525,15 +526,17 @@ class AFCClient(object):
                 if not os.path.exists(local_folder):
                     self.logger.info("Creating Folder: " + new_folder)
                     os.makedirs(local_folder)
+                    # Change modify times
+                    modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
+                    modTime = time.mktime(modify_time.timetuple())
+                    os.utime(local_folder, (modTime, modTime))
 
-                infos = self.get_file_info(posixpath.join(parent_dir, fd))
-                # Change modify times
-                modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
-                modTime = time.mktime(modify_time.timetuple())
-                os.utime(local_folder, (modTime, modTime))
+
+
 
                 if new_folder is not '':
                     self.pull_directory(new_folder, output)
+
 
 
             else:
@@ -544,6 +547,7 @@ class AFCClient(object):
                 else:
                     new_file = parent_dir + '/' + fd
 
+                remote_file = new_file
                 new_file = re.sub('[<>:"|?*]', '_', new_file)
                 local_file = output + new_file.strip()
                 parent_local_folder = (local_file[::-1].split("/"))
@@ -558,7 +562,7 @@ class AFCClient(object):
                 if infos is not None:
                     if infos['st_size'] == '0':
                         open(local_file, 'a').close()
-                self.pull_file(new_file, local_file)
+                self.pull_file(remote_file, local_file)
 
                 modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
                 modTime = time.mktime(modify_time.timetuple())
@@ -920,6 +924,11 @@ class AFC2Shell(Cmd):
                 if not os.path.exists(local_folder):
                     self.logger.info("Creating Folder: " + new_folder)
                     os.makedirs(local_folder)
+                    # Change modify times
+                    modify_time = datetime.fromtimestamp(int(infos['st_mtime']) // 1000000000)
+                    modTime = time.mktime(modify_time.timetuple())
+                    os.utime(local_folder, (modTime, modTime))
+
 
 
                 if new_folder is not '':
